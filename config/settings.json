@@ -12,7 +12,7 @@
   "debugPointType": "info",
   "debugPointDisplayName": "Info",
   "currentMapId": "buried_ruins",
-  "pointCoordinateMode": "base_map",
+  "pointCoordinateMode": "full_view",
   "showLabels": true,
   "enableDebugMode": true,
   "saveDebugScreenshots": false,

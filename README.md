@@ -39,9 +39,9 @@ If this machine only has the .NET Runtime, install the .NET 8 SDK first or open 
 
 Edit `config/points.json`.
 
-By default, `x` and `y` are `base_map` coordinates for the configured map in `config/maps.json`.
+By default, `mapX` and `mapY` are full-view map coordinates for the configured map in `config/maps.json`.
 
-Set `pointCoordinateMode` to `screen` in `config/settings.json` to use the older fixed 2560x1440 screen-coordinate fallback.
+Set `pointCoordinateMode` to `screen` in `config/settings.json` to use the older fixed 2560x1440 `x/y` screen-coordinate fallback.
 
 ```json
 {
@@ -51,6 +51,8 @@ Set `pointCoordinateMode` to `screen` in `config/settings.json` to use the older
   "type": "loose_loot",
   "displayName": "Loose Loot",
   "mapId": "dam_battlegrounds",
+  "mapX": 1234,
+  "mapY": 876,
   "x": 1234,
   "y": 876,
   "confidence": 0.8,
@@ -118,7 +120,7 @@ The current detector only answers one question: is the Buried Ruins map open?
 - Uses `config/settings.json` `confidenceThreshold`.
 - If confidence is below the threshold, overlay stays hidden.
 - It does not handle zoomed/dragged map alignment yet.
-- It does not project points from map coordinates yet.
+- It projects `mapX/mapY` points only for the configured full-view state.
 
 ## Category Filters
 
@@ -163,14 +165,19 @@ The app keeps the newest 50 `points_*.json` backups and prunes older backup file
 
 ## Coordinate Calibration
 
-Buried Ruins currently uses a fixed default-view calibration:
+Buried Ruins currently uses a manual full-view calibration:
+
+- In-game, open the map.
+- Manually zoom out to minimum so the whole map is visible.
+- Keep the map in that standard full-view state.
+- The app uses `fullViewScreenRect` to convert between screen `x/y` and point `mapX/mapY`.
 
 ```json
 {
   "mapId": "buried_ruins",
   "baseMapWidth": 2432,
   "baseMapHeight": 1140,
-  "defaultScreenMapRect": {
+  "fullViewScreenRect": {
     "left": 64,
     "top": 149,
     "width": 2432,
@@ -179,7 +186,7 @@ Buried Ruins currently uses a fixed default-view calibration:
 }
 ```
 
-This means a point at base-map coordinate `(0, 0)` renders at screen coordinate `(64, 149)` in the default map view. This phase does not handle zoomed or dragged maps yet.
+This means a point at map coordinate `(0, 0)` renders at screen coordinate `(64, 149)` in the standard full-view state. This phase does not handle arbitrary zoomed or dragged map states.
 
 ## Close Overlay
 

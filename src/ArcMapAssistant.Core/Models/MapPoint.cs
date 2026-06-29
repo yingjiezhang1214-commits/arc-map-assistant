@@ -8,6 +8,8 @@ public sealed class MapPoint
     public string Type { get; set; } = string.Empty;
     public string DisplayName { get; set; } = string.Empty;
     public string MapId { get; set; } = string.Empty;
+    public double? MapX { get; set; }
+    public double? MapY { get; set; }
     public double X { get; set; }
     public double Y { get; set; }
     public double Confidence { get; set; } = 1.0;

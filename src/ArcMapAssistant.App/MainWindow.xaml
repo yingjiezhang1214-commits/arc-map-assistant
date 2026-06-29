@@ -237,6 +237,14 @@
                                     Width="130"
                                     Binding="{Binding MapId}"
                                     IsReadOnly="True" />
+                <DataGridTextColumn Header="MapX"
+                                    Width="80"
+                                    Binding="{Binding MapX, StringFormat=0}"
+                                    IsReadOnly="True" />
+                <DataGridTextColumn Header="MapY"
+                                    Width="80"
+                                    Binding="{Binding MapY, StringFormat=0}"
+                                    IsReadOnly="True" />
             </DataGrid.Columns>
         </DataGrid>
 

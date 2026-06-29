@@ -245,12 +245,17 @@ public partial class MainWindow : Window
             Note = "Recorded from debug cursor hotkey"
         };
 
+        point = ConvertRecordedPointToCurrentCoordinateMode(point);
+
         try
         {
             _editablePoints.Add(point);
             _debugPointUndoStack.Push(point.Id);
-            await SavePointsAsync($"Recorded {point.Name} as {point.Group}/{point.Type} at X={point.X:0}, Y={point.Y:0}.");
-            StatusText.Text = $"Recorded {point.Name} as {point.Group}/{point.Type} at X={point.X:0}, Y={point.Y:0}.";
+            var coordinateText = point.MapX is not null && point.MapY is not null
+                ? $"mapX={point.MapX:0}, mapY={point.MapY:0}"
+                : $"X={point.X:0}, Y={point.Y:0}";
+            await SavePointsAsync($"Recorded {point.Name} as {point.Group}/{point.Type} at {coordinateText}.");
+            StatusText.Text = $"Recorded {point.Name} as {point.Group}/{point.Type} at {coordinateText}.";
         }
         catch (Exception ex)
         {
@@ -1183,7 +1188,7 @@ public partial class MainWindow : Window
 
     private IReadOnlyList<MapPoint> GetOverlayPoints()
     {
-        if (!string.Equals(_settings.PointCoordinateMode, "base_map", StringComparison.OrdinalIgnoreCase))
+        if (string.Equals(_settings.PointCoordinateMode, "screen", StringComparison.OrdinalIgnoreCase))
         {
             return _editablePoints.ToList();
         }
@@ -1199,9 +1204,28 @@ public partial class MainWindow : Window
         var transformer = new CoordinateTransformer();
         return _editablePoints
             .Select(point => string.Equals(point.MapId, mapConfig.MapId, StringComparison.OrdinalIgnoreCase)
-                ? transformer.ToScreenPoint(point, mapConfig)
+                ? transformer.ToScreenPoint(point, mapConfig, _settings.PointCoordinateMode)
                 : point)
             .ToList();
+    }
+
+    private MapPoint ConvertRecordedPointToCurrentCoordinateMode(MapPoint point)
+    {
+        if (string.Equals(_settings.PointCoordinateMode, "screen", StringComparison.OrdinalIgnoreCase))
+        {
+            return point;
+        }
+
+        var mapConfig = _mapConfigs.FirstOrDefault(config =>
+            string.Equals(config.MapId, _settings.CurrentMapId, StringComparison.OrdinalIgnoreCase));
+
+        if (mapConfig is null)
+        {
+            return point;
+        }
+
+        var transformer = new CoordinateTransformer();
+        return transformer.ToMapPoint(point, mapConfig, _settings.PointCoordinateMode);
     }
 
     private static string ResolveConfigDirectory()
@@ -1258,6 +1282,8 @@ public partial class MainWindow : Window
             Type = point.Type,
             DisplayName = point.DisplayName,
             MapId = point.MapId,
+            MapX = point.MapX,
+            MapY = point.MapY,
             X = point.X,
             Y = point.Y,
             Confidence = point.Confidence,

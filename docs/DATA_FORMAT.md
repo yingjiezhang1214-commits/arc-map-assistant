@@ -2,7 +2,7 @@
 
 ## points.json
 
-By default, `x` and `y` are `base_map` coordinates for the configured map. Set `pointCoordinateMode` to `screen` for the older fixed 2560x1440 screen-coordinate fallback.
+By default, `mapX` and `mapY` are full-view map coordinates for the configured map. `x` and `y` remain available as the older fixed 2560x1440 screen-coordinate fallback.
 
 ```json
 [
@@ -13,6 +13,8 @@ By default, `x` and `y` are `base_map` coordinates for the configured map. Set `
     "type": "loose_loot",
     "displayName": "Loose Loot",
     "mapId": "dam_battlegrounds",
+    "mapX": 1234,
+    "mapY": 876,
     "x": 1234,
     "y": 876,
     "confidence": 0.8,
@@ -27,6 +29,8 @@ By default, `x` and `y` are `base_map` coordinates for the configured map. Set `
 ```
 
 `group` is the large filter group. `type` is the fine marker type. `displayName` is the user-facing marker type label.
+
+`mapX` and `mapY` are coordinates on the full base map. `x` and `y` are retained for screen-coordinate fallback and for compatibility with older point files.
 
 `source`, `createdAt`, and `updatedAt` are optional metadata fields. F10 debug capture writes:
 
@@ -59,7 +63,7 @@ Legacy point entries without `group` and `displayName` are normalized on load:
   "debugPointType": "info",
   "debugPointDisplayName": "Info",
   "currentMapId": "buried_ruins",
-  "pointCoordinateMode": "base_map",
+  "pointCoordinateMode": "full_view",
   "showLabels": true,
   "enableDebugMode": true,
   "saveDebugScreenshots": false,
@@ -87,7 +91,8 @@ Legacy point entries without `group` and `displayName` are normalized on load:
 
 `pointCoordinateMode` accepts:
 
-- `base_map`: interpret `points.json` `x/y` as map coordinates and transform through `maps.json`.
+- `full_view`: user manually zooms the in-game map out to minimum, then the app interprets `mapX/mapY` through `fullViewScreenRect`.
+- `base_map`: legacy name for fixed map-coordinate projection through `defaultScreenMapRect`.
 - `screen`: fallback mode; interpret `points.json` `x/y` directly as 2560x1440 screen coordinates.
 
 ## backups
@@ -118,6 +123,12 @@ Older point backups are pruned after each new backup. `.gitkeep` and unrelated f
     "baseMapImage": "assets/maps/buried_ruins/base_map.png",
     "baseMapWidth": 2432,
     "baseMapHeight": 1140,
+    "fullViewScreenRect": {
+      "left": 64,
+      "top": 149,
+      "width": 2432,
+      "height": 1140
+    },
     "defaultScreenMapRect": {
       "left": 64,
       "top": 149,
@@ -131,4 +142,6 @@ Older point backups are pruned after each new backup. `.gitkeep` and unrelated f
 ]
 ```
 
-`defaultScreenMapRect` is the fixed default map viewport on a 2560x1440 screen. It is used only for the current fixed-view coordinate calibration phase.
+`fullViewScreenRect` is the fixed full-map viewport on a 2560x1440 screen after the user manually zooms out to minimum. Phase 3 supports only this standard full-view state.
+
+`defaultScreenMapRect` remains for legacy fixed-view experiments.

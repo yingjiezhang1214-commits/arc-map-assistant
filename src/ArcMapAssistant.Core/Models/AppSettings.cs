@@ -15,7 +15,7 @@ public sealed class AppSettings
     public string DebugPointType { get; set; } = "info";
     public string DebugPointDisplayName { get; set; } = "Info";
     public string CurrentMapId { get; set; } = "buried_ruins";
-    public string PointCoordinateMode { get; set; } = "base_map";
+    public string PointCoordinateMode { get; set; } = "full_view";
     public bool ShowLabels { get; set; } = true;
     public bool EnableDebugMode { get; set; } = true;
     public bool SaveDebugScreenshots { get; set; }
