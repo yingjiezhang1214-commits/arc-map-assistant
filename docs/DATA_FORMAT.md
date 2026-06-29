@@ -2,7 +2,7 @@
 
 ## points.json
 
-For Phase 1, `x` and `y` are fixed screen coordinates.
+By default, `x` and `y` are `base_map` coordinates for the configured map. Set `pointCoordinateMode` to `screen` for the older fixed 2560x1440 screen-coordinate fallback.
 
 ```json
 [
@@ -99,6 +99,14 @@ debug/backups/
 ```
 
 Automatic backups are created before the app overwrites `config/points.json`. Manual export uses the same folder. Import reads a selected JSON backup, normalizes marker taxonomy, backs up the current file, then writes the restored points.
+
+Backup retention keeps only the newest 50 files matching:
+
+```text
+points_*.json
+```
+
+Older point backups are pruned after each new backup. `.gitkeep` and unrelated files in `debug/backups` are left alone.
 
 ## maps.json
 

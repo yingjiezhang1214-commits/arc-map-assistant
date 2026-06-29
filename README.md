@@ -159,6 +159,8 @@ Saving points automatically exports the previous `config/points.json` to `debug/
 
 Use `Export` to manually copy the current `points.json` into `debug/backups`, and `Import` to restore a JSON backup file.
 
+The app keeps the newest 50 `points_*.json` backups and prunes older backup files after each new backup.
+
 ## Coordinate Calibration
 
 Buried Ruins currently uses a fixed default-view calibration:

@@ -19,6 +19,7 @@ namespace ArcMapAssistant.App;
 
 public partial class MainWindow : Window
 {
+    private const int MaxPointBackups = 50;
     private const int WmHotkey = 0x0312;
     private const int ToggleOverlayHotkeyId = 1001;
     private const int ReloadConfigHotkeyId = 1002;
@@ -731,7 +732,37 @@ public partial class MainWindow : Window
         await using var source = File.OpenRead(_pointsPath);
         await using var destination = File.Create(backupPath);
         await source.CopyToAsync(destination);
+
+        CleanupOldPointBackups();
         return backupPath;
+    }
+
+    private void CleanupOldPointBackups()
+    {
+        if (!Directory.Exists(_backupsDirectory))
+        {
+            return;
+        }
+
+        var backups = Directory
+            .EnumerateFiles(_backupsDirectory, "points_*.json")
+            .Select(path => new FileInfo(path))
+            .OrderByDescending(file => file.CreationTimeUtc)
+            .ThenByDescending(file => file.Name, StringComparer.OrdinalIgnoreCase)
+            .Skip(MaxPointBackups)
+            .ToList();
+
+        foreach (var backup in backups)
+        {
+            try
+            {
+                backup.Delete();
+            }
+            catch
+            {
+                // Backup pruning should not block point saves.
+            }
+        }
     }
 
     private void ReplaceEditablePoints(IEnumerable<MapPoint> points)
