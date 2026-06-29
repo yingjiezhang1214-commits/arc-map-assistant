@@ -1,0 +1,44 @@
+[
+  {
+    "id": "loot_dam_001",
+    "name": "High Value Loot A",
+    "group": "special_events",
+    "type": "loose_loot",
+    "displayName": "Loose Loot",
+    "mapId": "buried_ruins",
+    "x": 1170,
+    "y": 727,
+    "confidence": 0.8,
+    "priority": 5,
+    "enabled": true,
+    "note": "Manual MVP test marker"
+  },
+  {
+    "id": "extract_dam_001",
+    "name": "Extraction A",
+    "group": "extracts",
+    "type": "hatch_extract",
+    "displayName": "Hatch Extract",
+    "mapId": "buried_ruins",
+    "x": 916,
+    "y": 281,
+    "confidence": 1.0,
+    "priority": 4,
+    "enabled": true,
+    "note": "Manual MVP test marker"
+  },
+  {
+    "id": "quest_dam_001",
+    "name": "Quest A",
+    "group": "special_events",
+    "type": "info",
+    "displayName": "Info",
+    "mapId": "buried_ruins",
+    "x": 1436,
+    "y": 1051,
+    "confidence": 0.9,
+    "priority": 3,
+    "enabled": true,
+    "note": "Manual MVP test marker"
+  }
+]

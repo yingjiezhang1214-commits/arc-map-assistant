@@ -1,0 +1,279 @@
+<Window x:Class="ArcMapAssistant.App.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Arc Map Assistant"
+        Width="1280"
+        Height="780"
+        WindowStartupLocation="CenterScreen"
+        MinWidth="1080"
+        MinHeight="680"
+        KeyDown="Window_KeyDown">
+    <Grid Margin="18">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="Arc Raiders AI Map Assistant"
+                   FontSize="20"
+                   FontWeight="SemiBold" />
+
+        <TextBlock Grid.Row="1"
+                   Margin="0,8,0,0"
+                   Foreground="#555"
+                   Text="Phase 1 MVP: local JSON markers, transparent click-through overlay." />
+
+        <Border Grid.Row="2"
+                Margin="0,14,0,12"
+                Padding="12"
+                BorderBrush="#DDD"
+                BorderThickness="1"
+                CornerRadius="4">
+            <StackPanel>
+                <TextBlock x:Name="StatusText"
+                           Text="Loading..."
+                           TextWrapping="Wrap" />
+                <TextBlock Margin="0,8,0,0"
+                           Foreground="#666"
+                           Text="F7 detects map and toggles overlay. F9 reloads all. F10 records point. F12 undoes last debug point." />
+                <TextBlock x:Name="DetectionLogText"
+                           Margin="0,8,0,0"
+                           FontFamily="Consolas"
+                           Foreground="#444"
+                           Text="Detection: not run yet" />
+                <TextBlock x:Name="PointCountText"
+                           Margin="0,8,0,0"
+                           FontFamily="Consolas"
+                           Foreground="#444"
+                           Text="Points: 0 / 0" />
+            </StackPanel>
+        </Border>
+
+        <Border Grid.Row="3"
+                Margin="0,0,0,12"
+                Padding="12"
+                BorderBrush="#DDD"
+                BorderThickness="1"
+                CornerRadius="4">
+            <StackPanel>
+                <DockPanel Margin="0,0,0,8">
+                    <TextBlock DockPanel.Dock="Left"
+                               Width="84"
+                               VerticalAlignment="Center"
+                               FontWeight="SemiBold"
+                               Text="Groups" />
+                    <WrapPanel x:Name="GroupFilterPanel" />
+                </DockPanel>
+                <DockPanel>
+                    <TextBlock DockPanel.Dock="Left"
+                               Width="84"
+                               VerticalAlignment="Top"
+                               FontWeight="SemiBold"
+                               Text="Types" />
+                    <ScrollViewer MaxHeight="76"
+                                  VerticalScrollBarVisibility="Auto">
+                        <WrapPanel x:Name="TypeFilterPanel" />
+                    </ScrollViewer>
+                </DockPanel>
+                <DockPanel Margin="0,8,0,0">
+                    <TextBlock DockPanel.Dock="Left"
+                               Width="84"
+                               VerticalAlignment="Center"
+                               FontWeight="SemiBold"
+                               Text="F10 Point" />
+                    <StackPanel Orientation="Horizontal">
+                        <ComboBox x:Name="DebugGroupComboBox"
+                                  Width="190"
+                                  Margin="0,0,8,0"
+                                  DisplayMemberPath="DisplayName"
+                                  SelectedValuePath="Value"
+                                  SelectionChanged="DebugPointSelection_Changed" />
+                        <ComboBox x:Name="DebugTypeComboBox"
+                                  Width="230"
+                                  DisplayMemberPath="DisplayName"
+                                  SelectedValuePath="Value"
+                                  SelectionChanged="DebugPointSelection_Changed" />
+                    </StackPanel>
+                </DockPanel>
+                <DockPanel Margin="0,10,0,0">
+                    <TextBlock DockPanel.Dock="Left"
+                               Width="84"
+                               VerticalAlignment="Center"
+                               FontWeight="SemiBold"
+                               Text="List" />
+                    <WrapPanel>
+                        <TextBox x:Name="SearchTextBox"
+                                 Width="220"
+                                 Margin="0,0,8,6"
+                                 VerticalContentAlignment="Center"
+                                 ToolTip="Search name and note"
+                                 TextChanged="SearchTextBox_TextChanged" />
+                        <ComboBox x:Name="ListGroupFilterComboBox"
+                                  Width="170"
+                                  Margin="0,0,8,6"
+                                  DisplayMemberPath="DisplayName"
+                                  SelectedValuePath="Value"
+                                  SelectionChanged="ListFilter_Changed" />
+                        <ComboBox x:Name="ListTypeFilterComboBox"
+                                  Width="210"
+                                  Margin="0,0,8,6"
+                                  DisplayMemberPath="DisplayName"
+                                  SelectedValuePath="Value"
+                                  SelectionChanged="ListFilter_Changed" />
+                        <ComboBox x:Name="ListEnabledFilterComboBox"
+                                  Width="120"
+                                  Margin="0,0,8,6"
+                                  DisplayMemberPath="DisplayName"
+                                  SelectedValuePath="Value"
+                                  SelectionChanged="ListFilter_Changed" />
+                        <ComboBox x:Name="ListPriorityFilterComboBox"
+                                  Width="120"
+                                  Margin="0,0,8,6"
+                                  DisplayMemberPath="DisplayName"
+                                  SelectedValuePath="Value"
+                                  SelectionChanged="ListFilter_Changed" />
+                        <ComboBox x:Name="PrioritySortComboBox"
+                                  Width="150"
+                                  Margin="0,0,8,6"
+                                  DisplayMemberPath="DisplayName"
+                                  SelectedValuePath="Value"
+                                  SelectionChanged="ListFilter_Changed" />
+                    </WrapPanel>
+                </DockPanel>
+                <DockPanel Margin="0,4,0,0">
+                    <TextBlock DockPanel.Dock="Left"
+                               Width="84"
+                               VerticalAlignment="Center"
+                               FontWeight="SemiBold"
+                               Text="Batch" />
+                    <WrapPanel>
+                        <ComboBox x:Name="BatchGroupComboBox"
+                                  Width="190"
+                                  Margin="0,0,8,6"
+                                  DisplayMemberPath="DisplayName"
+                                  SelectedValuePath="Value"
+                                  SelectionChanged="BatchGroupComboBox_SelectionChanged" />
+                        <ComboBox x:Name="BatchTypeComboBox"
+                                  Width="230"
+                                  Margin="0,0,8,6"
+                                  DisplayMemberPath="DisplayName"
+                                  SelectedValuePath="Value" />
+                        <Button Width="100"
+                                Margin="0,0,8,6"
+                                Content="Apply Type"
+                                Click="ApplyBatchType_Click" />
+                        <Button Width="88"
+                                Margin="0,0,8,6"
+                                Content="Enable"
+                                Click="EnableSelected_Click" />
+                        <Button Width="88"
+                                Margin="0,0,8,6"
+                                Content="Disable"
+                                Click="DisableSelected_Click" />
+                    </WrapPanel>
+                </DockPanel>
+            </StackPanel>
+        </Border>
+
+        <DataGrid x:Name="PointsGrid"
+                  Grid.Row="4"
+                  Margin="0,0,0,12"
+                  AutoGenerateColumns="False"
+                  CanUserAddRows="False"
+                  CanUserDeleteRows="False"
+                  GridLinesVisibility="Horizontal"
+                  HeadersVisibility="Column"
+                  IsReadOnly="False"
+                  CanUserSortColumns="True"
+                  SelectionMode="Extended"
+                  SelectionUnit="FullRow"
+                  SelectionChanged="PointsGrid_SelectionChanged">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Id"
+                                    Width="170"
+                                    Binding="{Binding Id}"
+                                    IsReadOnly="True" />
+                <DataGridTextColumn Header="Name"
+                                    Width="150"
+                                    Binding="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
+                <DataGridTextColumn Header="Group"
+                                    Width="130"
+                                    Binding="{Binding Group, UpdateSourceTrigger=PropertyChanged}" />
+                <DataGridTextColumn Header="Type"
+                                    Width="130"
+                                    Binding="{Binding Type, UpdateSourceTrigger=PropertyChanged}" />
+                <DataGridTextColumn Header="Display"
+                                    Width="130"
+                                    Binding="{Binding DisplayName, UpdateSourceTrigger=PropertyChanged}" />
+                <DataGridCheckBoxColumn Header="Enabled"
+                                        Width="80"
+                                        Binding="{Binding Enabled, UpdateSourceTrigger=PropertyChanged}" />
+                <DataGridTextColumn Header="Priority"
+                                    Width="80"
+                                    Binding="{Binding Priority, UpdateSourceTrigger=PropertyChanged}" />
+                <DataGridTextColumn Header="Source"
+                                    Width="120"
+                                    Binding="{Binding Source, UpdateSourceTrigger=PropertyChanged}" />
+                <DataGridTextColumn Header="Updated"
+                                    Width="160"
+                                    Binding="{Binding UpdatedAt, StringFormat=g}"
+                                    IsReadOnly="True" />
+                <DataGridTextColumn Header="Note"
+                                    Width="*"
+                                    Binding="{Binding Note, UpdateSourceTrigger=PropertyChanged}" />
+                <DataGridTextColumn Header="X"
+                                    Width="70"
+                                    Binding="{Binding X, StringFormat=0}"
+                                    IsReadOnly="True" />
+                <DataGridTextColumn Header="Y"
+                                    Width="70"
+                                    Binding="{Binding Y, StringFormat=0}"
+                                    IsReadOnly="True" />
+                <DataGridTextColumn Header="Map"
+                                    Width="130"
+                                    Binding="{Binding MapId}"
+                                    IsReadOnly="True" />
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <StackPanel Grid.Row="5"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right">
+            <Button Width="96"
+                    Margin="0,0,8,0"
+                    Content="Detect"
+                    Click="ToggleOverlay_Click" />
+            <Button Width="96"
+                    Margin="0,0,8,0"
+                    Content="Reload All"
+                    Click="ReloadAll_Click" />
+            <Button Width="96"
+                    Margin="0,0,8,0"
+                    Content="Save"
+                    Click="Save_Click" />
+            <Button Width="96"
+                    Margin="0,0,8,0"
+                    Content="Duplicate"
+                    Click="Duplicate_Click" />
+            <Button Width="96"
+                    Margin="0,0,8,0"
+                    Content="Delete"
+                    Click="Delete_Click" />
+            <Button Width="96"
+                    Margin="0,0,8,0"
+                    Content="Export"
+                    Click="ExportBackup_Click" />
+            <Button Width="96"
+                    Margin="0,0,8,0"
+                    Content="Import"
+                    Click="ImportBackup_Click" />
+            <Button Width="96"
+                    Content="Exit"
+                    Click="Exit_Click" />
+        </StackPanel>
+    </Grid>
+</Window>
