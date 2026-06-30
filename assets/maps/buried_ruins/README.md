@@ -1,8 +1,33 @@
-# Buried Ruins / 掩埋废墟 Samples
+# Buried City / Buried Ruins Assets
 
-Manual screenshot samples for the `buried_ruins` map.
+Manual screenshot samples and imported marker data for the `buried_ruins` map id.
 
-These files are collected for later map-open detection and map-region matching work. They are raw sample assets only. The current application does not run OpenCV or image recognition against them yet.
+Screenshot files are collected for map-open detection and later map-region matching work. Imported marker files are static local data used by the overlay.
+
+## Imported Markers
+
+ARC Raiders Hub Buried City data is imported with:
+
+```powershell
+node .\tools\import_arcraidershub_buried_city.js
+```
+
+The committed import snapshot lives in:
+
+```text
+assets/maps/buried_ruins/imports/
+  arcraidershub_buried_city_points.json
+  arcraidershub_buried_city_summary.json
+```
+
+Hub coordinates are converted from center-origin source coordinates to local full-map coordinates with:
+
+```text
+mapX = source x + 3072
+mapY = source y + 3072
+```
+
+The app still expects the user to manually zoom the map out to the minimum full-view state before using these coordinates.
 
 ## Source
 
@@ -67,11 +92,11 @@ screenMapRect.left = 64
 screenMapRect.top = 149
 screenMapRect.width = 2432
 screenMapRect.height = 1140
-baseMapWidth = 2432
-baseMapHeight = 1140
+baseMapWidth = 6144
+baseMapHeight = 6144
 ```
 
-This is a first-pass fixed default-view mapping. It intentionally does not support zoomed or dragged map views yet.
+This is a first-pass full-view mapping. It intentionally does not support arbitrary zoomed or dragged map views yet.
 
 ## Naming Rule
 

@@ -5,7 +5,10 @@ debug/screenshots/*
 debug/matches/*
 debug/logs/*
 debug/backups/*
+debug/scrape/*
+debug/arcraidershub_*.html
 !debug/screenshots/.gitkeep
 !debug/matches/.gitkeep
 !debug/logs/.gitkeep
 !debug/backups/.gitkeep
+!debug/scrape/.gitkeep

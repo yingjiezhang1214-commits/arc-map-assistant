@@ -19,12 +19,15 @@
 - `mapX/mapY` as primary point coordinate fields, with old `x/y` retained as screen-coordinate fallback.
 - `fullViewScreenRect` in map configuration.
 - Two-corner full-view rectangle capture that writes `maps.json` before batch F10 point capture.
+- Repeatable ARC Raiders Hub Buried City importer for `buried_ruins` marker data.
+- Imported Hub marker snapshot and summary under `assets/maps/buried_ruins/imports`.
 - OpenCvSharp template check for the limited "is map open" gate.
 - Sample directories for Buried Ruins map captures.
 
 ### Changed
 
 - Reoriented Phase 3 to `full_view`: the user manually zooms the map out to minimum, exposing the full map, and the app supports only that standard state.
+- Rebased Buried Ruins point coordinates to the Hub `6144x6144` Buried City map coordinate space.
 - Default detect/toggle hotkey is `F7`, while remaining configurable through `settings.json`.
 - Point saves now automatically back up the previous `points.json`.
 - Backup retention now keeps only the newest 50 `points_*.json` files under `debug/backups`.
@@ -36,4 +39,4 @@
 - No new screenshot recognition work beyond the existing fixed map-open template check.
 - No arbitrary zoom/drag handling.
 - No Homography.
-- No website crawling or external marker data import in this sealed baseline.
+- No game-process website integration; Hub data import is an explicit offline project data refresh step.

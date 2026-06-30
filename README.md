@@ -122,6 +122,26 @@ The current detector only answers one question: is the Buried Ruins map open?
 - It does not handle zoomed/dragged map alignment yet.
 - It projects `mapX/mapY` points only for the configured full-view state.
 
+## ARC Raiders Hub Data Import
+
+Buried Ruins currently uses imported Buried City marker data from [ARC Raiders Hub](https://arcraidershub.com/maps/buried-city).
+
+Run the importer to refresh local marker data:
+
+```powershell
+node .\tools\import_arcraidershub_buried_city.js
+```
+
+The importer:
+
+- Fetches the Hub Buried City map configuration and marker payload.
+- Converts Hub center-origin coordinates to local full-map coordinates: `mapX = sourceX + 3072`, `mapY = sourceY + 3072`.
+- Writes the imported runtime data to `config/points.json`.
+- Writes a committed snapshot under `assets/maps/buried_ruins/imports`.
+- Updates `config/maps.json` to use the Hub `6144x6144` base-map coordinate size.
+
+Temporary scrape/debug files under `debug/scrape` are intentionally not committed.
+
 ## Category Filters
 
 Use the category checkboxes in the main window to show or hide marker groups and types. Changes are saved to `config/settings.json` under `enabledGroups` and `enabledTypes`, then applied to the overlay immediately.
@@ -179,8 +199,8 @@ Buried Ruins currently uses a manual full-view calibration:
 ```json
 {
   "mapId": "buried_ruins",
-  "baseMapWidth": 2432,
-  "baseMapHeight": 1140,
+  "baseMapWidth": 6144,
+  "baseMapHeight": 6144,
   "fullViewScreenRect": {
     "left": 64,
     "top": 149,

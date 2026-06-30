@@ -38,6 +38,13 @@ By default, `mapX` and `mapY` are full-view map coordinates for the configured m
 - `createdAt`: the local timestamp when the point was created
 - `updatedAt`: the local timestamp when the point was last changed by the tool
 
+Imported ARC Raiders Hub points write:
+
+- `source`: `arcraidershub`
+- `mapId`: `buried_ruins`
+- `mapX/mapY`: Hub Buried City center-origin coordinates converted into the local `6144x6144` base-map coordinate space
+- `note`: source URL, source marker id, original category, level, difficulty, and source color metadata
+
 Legacy point entries without `group` and `displayName` are normalized on load:
 
 - `high_value_loot` -> `special_events / loose_loot`
@@ -119,10 +126,10 @@ Older point backups are pruned after each new backup. `.gitkeep` and unrelated f
 [
   {
     "mapId": "buried_ruins",
-    "displayName": "Buried Ruins / 掩埋废墟",
+    "displayName": "Buried City / Buried Ruins",
     "baseMapImage": "assets/maps/buried_ruins/base_map.png",
-    "baseMapWidth": 2432,
-    "baseMapHeight": 1140,
+    "baseMapWidth": 6144,
+    "baseMapHeight": 6144,
     "fullViewScreenRect": {
       "left": 64,
       "top": 149,
@@ -153,3 +160,32 @@ The app can set `fullViewScreenRect` from two captured screen corners:
 5. The app writes the normalized rectangle into `maps.json`.
 
 `defaultScreenMapRect` remains for legacy fixed-view experiments.
+
+## ARC Raiders Hub import
+
+The Buried Ruins data import is repeatable:
+
+```powershell
+node .\tools\import_arcraidershub_buried_city.js
+```
+
+The importer reads:
+
+- `https://arcraidershub.com/data/maps/buried-city.json`
+- `https://arcraidershub.com/obfuscated-js/buried_city_markers-data.js`
+
+It writes:
+
+- `config/points.json`
+- `config/maps.json`
+- `assets/maps/buried_ruins/imports/arcraidershub_buried_city_points.json`
+- `assets/maps/buried_ruins/imports/arcraidershub_buried_city_summary.json`
+
+Hub marker coordinates are centered around `(0, 0)`. The local app stores them as positive full-map coordinates:
+
+```text
+mapX = source x + 3072
+mapY = source y + 3072
+```
+
+This phase still supports only the manually zoomed-out full-view state. It does not add arbitrary zoom, drag, Homography, or new recognition logic.
