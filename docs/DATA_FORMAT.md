@@ -144,4 +144,12 @@ Older point backups are pruned after each new backup. `.gitkeep` and unrelated f
 
 `fullViewScreenRect` is the fixed full-map viewport on a 2560x1440 screen after the user manually zooms out to minimum. Phase 3 supports only this standard full-view state.
 
+The app can set `fullViewScreenRect` from two captured screen corners:
+
+1. User manually zooms the in-game map out to minimum.
+2. User clicks `Start Rect`.
+3. User captures the visible map top-left corner.
+4. User captures the visible map bottom-right corner.
+5. The app writes the normalized rectangle into `maps.json`.
+
 `defaultScreenMapRect` remains for legacy fixed-view experiments.

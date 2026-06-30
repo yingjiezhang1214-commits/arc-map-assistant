@@ -36,6 +36,7 @@ Goal: complete Buried City / Buried Ruins full-map coordinate calibration for th
 - User manually zooms the in-game map out to minimum so the whole map is visible.
 - The app only supports this standard `full_view` state in this phase.
 - Store `fullViewScreenRect` in `maps.json`.
+- Set `fullViewScreenRect` from two captured screen corners: top-left and bottom-right.
 - Store marker coordinates as `mapX/mapY` in `points.json`.
 - Convert F10 screen captures to `mapX/mapY`.
 - Convert `mapX/mapY` back to screen coordinates for overlay rendering.

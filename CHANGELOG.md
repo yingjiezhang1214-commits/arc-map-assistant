@@ -18,6 +18,7 @@
 - `full_view` coordinate mode for the standard manually zoomed-out full-map state.
 - `mapX/mapY` as primary point coordinate fields, with old `x/y` retained as screen-coordinate fallback.
 - `fullViewScreenRect` in map configuration.
+- Two-corner full-view rectangle capture that writes `maps.json` before batch F10 point capture.
 - OpenCvSharp template check for the limited "is map open" gate.
 - Sample directories for Buried Ruins map captures.
 

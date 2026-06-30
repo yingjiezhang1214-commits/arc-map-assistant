@@ -45,6 +45,8 @@ public partial class MainWindow : Window
     private readonly ObservableCollection<MapPoint> _editablePoints = new();
     private readonly Stack<string> _debugPointUndoStack = new();
     private ICollectionView? _pointsView;
+    private bool _isCapturingFullViewRect;
+    private ScreenPoint? _fullViewTopLeft;
 
     public MainWindow()
     {
@@ -439,6 +441,90 @@ public partial class MainWindow : Window
         }
 
         await SaveDebugPointSelectionAsync();
+    }
+
+    private void StartFullViewRect_Click(object sender, RoutedEventArgs e)
+    {
+        _isCapturingFullViewRect = true;
+        _fullViewTopLeft = null;
+        StatusText.Text = "Full-view calibration started. Move mouse to the visible map top-left corner, then click Capture Corner.";
+    }
+
+    private async void CaptureFullViewCorner_Click(object sender, RoutedEventArgs e)
+    {
+        await CaptureFullViewCornerAsync();
+    }
+
+    private void CancelFullViewRect_Click(object sender, RoutedEventArgs e)
+    {
+        _isCapturingFullViewRect = false;
+        _fullViewTopLeft = null;
+        StatusText.Text = "Full-view calibration canceled.";
+    }
+
+    private async Task CaptureFullViewCornerAsync()
+    {
+        if (!_isCapturingFullViewRect)
+        {
+            StatusText.Text = "Click Start Rect before capturing full-view corners.";
+            return;
+        }
+
+        if (!GetCursorPos(out var cursorPosition))
+        {
+            StatusText.Text = "Failed to read current mouse position.";
+            return;
+        }
+
+        if (_fullViewTopLeft is null)
+        {
+            _fullViewTopLeft = cursorPosition;
+            StatusText.Text = $"Captured full-view top-left: X={cursorPosition.X}, Y={cursorPosition.Y}. Move to bottom-right, then click Capture Corner.";
+            return;
+        }
+
+        await SaveFullViewScreenRectAsync(_fullViewTopLeft.Value, cursorPosition);
+        _isCapturingFullViewRect = false;
+        _fullViewTopLeft = null;
+    }
+
+    private async Task SaveFullViewScreenRectAsync(ScreenPoint firstCorner, ScreenPoint secondCorner)
+    {
+        var left = Math.Min(firstCorner.X, secondCorner.X);
+        var top = Math.Min(firstCorner.Y, secondCorner.Y);
+        var width = Math.Abs(secondCorner.X - firstCorner.X);
+        var height = Math.Abs(secondCorner.Y - firstCorner.Y);
+
+        if (width <= 0 || height <= 0)
+        {
+            StatusText.Text = "Full-view rect is invalid. Capture two different corners.";
+            return;
+        }
+
+        var mapConfigs = _mapConfigs.ToList();
+        var mapConfig = mapConfigs.FirstOrDefault(config =>
+            string.Equals(config.MapId, _settings.CurrentMapId, StringComparison.OrdinalIgnoreCase));
+
+        if (mapConfig is null)
+        {
+            StatusText.Text = $"Current map config not found: {_settings.CurrentMapId}.";
+            return;
+        }
+
+        mapConfig.FullViewScreenRect = new ScreenRect
+        {
+            Left = left,
+            Top = top,
+            Width = width,
+            Height = height
+        };
+
+        var repository = new MapConfigRepository(_mapsPath);
+        await repository.SaveAsync(mapConfigs);
+        _mapConfigs = mapConfigs;
+        RefreshOverlayPoints();
+
+        StatusText.Text = $"Saved fullViewScreenRect for {_settings.CurrentMapId}: left={left}, top={top}, width={width}, height={height}.";
     }
 
     private async void ReloadAll_Click(object sender, RoutedEventArgs e)

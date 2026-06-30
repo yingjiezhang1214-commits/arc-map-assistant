@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using ArcMapAssistant.Core.Models;
 
 namespace ArcMapAssistant.Core.Services;
@@ -9,7 +10,10 @@ public sealed class MapConfigRepository
     {
         PropertyNameCaseInsensitive = true,
         ReadCommentHandling = JsonCommentHandling.Skip,
-        AllowTrailingCommas = true
+        AllowTrailingCommas = true,
+        WriteIndented = true,
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        DefaultIgnoreCondition = JsonIgnoreCondition.Never
     };
 
     private readonly string _path;
@@ -30,5 +34,16 @@ public sealed class MapConfigRepository
         var configs = await JsonSerializer.DeserializeAsync<List<MapConfig>>(stream, JsonOptions, cancellationToken);
         return configs ?? [];
     }
-}
 
+    public async Task SaveAsync(IEnumerable<MapConfig> configs, CancellationToken cancellationToken = default)
+    {
+        var directory = Path.GetDirectoryName(_path);
+        if (!string.IsNullOrWhiteSpace(directory))
+        {
+            Directory.CreateDirectory(directory);
+        }
+
+        await using var stream = File.Create(_path);
+        await JsonSerializer.SerializeAsync(stream, configs.ToList(), JsonOptions, cancellationToken);
+    }
+}

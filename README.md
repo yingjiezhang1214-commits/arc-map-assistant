@@ -170,6 +170,10 @@ Buried Ruins currently uses a manual full-view calibration:
 - In-game, open the map.
 - Manually zoom out to minimum so the whole map is visible.
 - Keep the map in that standard full-view state.
+- In the app, click `Start Rect`.
+- Move the mouse to the visible full-map top-left corner and click `Capture Corner`.
+- Move the mouse to the visible full-map bottom-right corner and click `Capture Corner` again.
+- The app writes `maps.json` `fullViewScreenRect`, refreshes the overlay, and is then ready for batch `F10` point capture.
 - The app uses `fullViewScreenRect` to convert between screen `x/y` and point `mapX/mapY`.
 
 ```json
